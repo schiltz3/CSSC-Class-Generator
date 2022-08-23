@@ -16,9 +16,9 @@ function saveData(filename: string, data: any) {
 
 
 // getData();
-const year = "Spring"
+const semester = "Fall"
 const major = "COMPSCI"
 // get_classes(year, major)
-get_classes(year, major).then((classes) => {
-    saveData("Class_list", classes)
+get_classes(semester, major).then((classes) => {
+    saveData(major + "-" + semester + "-Class-List", classes)
 })

@@ -21,16 +21,16 @@ export interface Class {
 }
 
 // TODO: Swap to headless chrome
-export async function get_classes(year: string, major: string) {
+export async function get_classes(semester: string, major: string) {
     let classes_obj: Class[] = []
 
     try {
         await driver.get('https://catalog.uwm.edu/course-search');
 
-        const years = await driver.findElements(By.css("option"));
-        years.forEach(async (item) => {
+        const semesters = await driver.findElements(By.css("option"));
+        semesters.forEach(async (item) => {
             let text = await item.getText()
-            if (text.startsWith(year)) {
+            if (text.startsWith(semester)) {
                 await item.click();
             }
         });
@@ -51,8 +51,6 @@ export async function get_classes(year: string, major: string) {
                 title: title
             }
             classes_obj.push(_class)
-            console.log("Number: " + number)
-            console.log("title: " + title + "\n")
         });
 
     } finally {
