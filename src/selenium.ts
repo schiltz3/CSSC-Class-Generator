@@ -34,52 +34,52 @@ export async function get_majors() {
 
 }
 
-async function get_class_info(course: WebElement) {
+// async function get_class_info(course: WebElement) {
 
-}
+// }
 
 // TODO: Swap to headless chrome
-export async function get_classes(driver: ThenableWebDriver, semester: string, major: string) {
-    let classes_obj: Class[] = []
+export async function get_classes(driver: ThenableWebDriver, semester: string, subject: string) {
+    let courses_list: Class[] = []
 
     try {
         await driver.get('https://catalog.uwm.edu/course-search');
 
-        const [semesters, subject, search_button] = await Promise.all([
+        const [semester_elements, subject_element, search_button_element] = await Promise.all([
             driver.findElements(By.css("option")),
-            driver.findElement(By.css("option[value='" + major + "']")),
+            driver.findElement(By.css("option[value='" + subject + "']")),
             driver.findElement(By.id("search-button"))
         ])
 
-        semesters.forEach(async (item) => {
-            let text = await item.getText()
+        semester_elements.forEach(async (semester_element) => {
+            let text = await semester_element.getText()
             if (text.startsWith(semester)) {
-                await item.click();
+                await semester_element.click();
             }
         });
 
-        await subject.click();
-        await search_button.click();
+        await subject_element.click();
+        await search_button_element.click();
 
         // Allow results to load
         await driver.wait(until.elementsLocated(By.className("result result--group-start")))
 
-        const courses = await driver.findElements(By.className("result result--group-start"));
-        courses.forEach(async (item) => {
+        const course_elements = await driver.findElements(By.className("result result--group-start"));
+        course_elements.forEach(async (course_element) => {
             const [number, title] = await Promise.all([
-                item.findElement(By.className("result__code")).getText(),
-                item.findElement(By.className("result__title")).getText()
+                course_element.findElement(By.className("result__code")).getText(),
+                course_element.findElement(By.className("result__title")).getText()
             ])
-            var _class: Class = {
+            var course: Class = {
                 number: number,
                 title: title
             }
-            classes_obj.push(_class)
+            courses_list.push(course)
         });
 
     } finally {
         await driver.sleep(1000)
         await driver.quit();
-        return classes_obj
+        return courses_list
     }
 };
