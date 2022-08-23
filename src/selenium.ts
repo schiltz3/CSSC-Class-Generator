@@ -78,10 +78,12 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
             await course_element.click();
 
             //wait for panel to load
+            await driver.sleep(200) //Do not know how to verify new panel has loaded
             const content_element = await driver.wait(until.elementLocated(By.className("panel panel--2x panel--kind-details panel--visible")));
+            await driver.wait(until.elementIsVisible(content_element));
+
 
             const info = await get_class_info(content_element)
-            console.log(info)
 
             var course: Class = {
                 code: number,
