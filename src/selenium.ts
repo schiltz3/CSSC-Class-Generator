@@ -45,7 +45,12 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, m
     try {
         await driver.get('https://catalog.uwm.edu/course-search');
 
-        const semesters = await driver.findElements(By.css("option"));
+        const [semesters, subject, search_button] = await Promise.all([
+            driver.findElements(By.css("option")),
+            driver.findElement(By.css("option[value='" + major + "']")),
+            driver.findElement(By.id("search-button"))
+        ])
+
         semesters.forEach(async (item) => {
             let text = await item.getText()
             if (text.startsWith(semester)) {
@@ -53,9 +58,8 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, m
             }
         });
 
-        await driver.findElement(By.css("option[value='" + major + "']")).click();
-
-        await driver.findElement(By.id("search-button")).click();
+        await subject.click();
+        await search_button.click();
 
         // Allow results to load
         await driver.wait(until.elementsLocated(By.className("result result--group-start")))
