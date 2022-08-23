@@ -91,30 +91,6 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
             courses_list.push(course)
         }
 
-        //does not wait
-        //ran in paralell which can't happen with clicks
-        // course_elements.forEach(
-        //     async (course_element) => {
-        //         const [number, title] = await Promise.all([
-        //             course_element.findElement(By.className("result__code")).getText(),
-        //             course_element.findElement(By.className("result__title")).getText()
-        //         ])
-
-        //         await course_element.click();
-        //         // wait for panel to load
-        //         const content_element = await driver.wait(until.elementLocated(By.className("panel panel--2x panel--kind-details panel--visible")));
-
-        //         const info = await get_class_info(content_element)
-        //         console.log(info)
-
-        //         var course: Class = {
-        //             code: number,
-        //             title: title,
-        //             info: info
-        //         }
-        //         courses_list.push(course)
-        //     });
-
     } finally {
         // await driver.sleep(1000)
         await driver.quit();
