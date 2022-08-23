@@ -1,31 +1,45 @@
-import { Builder, By, Capabilities, until } from 'selenium-webdriver';
+import { Builder, By, Capabilities, ThenableWebDriver, until } from 'selenium-webdriver';
 import chrome, { Options } from 'selenium-webdriver/chrome';
 
-// const path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_105/chromedriver.exe'
-// chromedriver for chrome version 104
-const path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_104/chromedriver.exe'
-const service = new chrome.ServiceBuilder(path);
-
-let capabilities = new Capabilities();
-capabilities.setPageLoadStrategy("eager");
-
-let options = new Options();
-options.headless();
-
-const driver = new Builder()
-    .withCapabilities(capabilities)
-    .setChromeOptions(options)
-    .forBrowser('chrome')
-    .setChromeService(service)
-    .build();
 
 export interface Class {
     number: string,
     title: string,
 }
 
+export function setup(driver_path: string) {
+    // const path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_105/chromedriver.exe'
+    // chromedriver for chrome version 104
+    const service = new chrome.ServiceBuilder(driver_path);
+
+    let capabilities = new Capabilities();
+    capabilities.setPageLoadStrategy("eager");
+
+    let options = new Options();
+    // options.headless();
+
+    const driver = new Builder()
+        .withCapabilities(capabilities)
+        .setChromeOptions(options)
+        .forBrowser('chrome')
+        .setChromeService(service)
+        .build();
+    return driver
+}
+
+export async function get_semester() {
+
+}
+export async function get_majors() {
+
+}
+
+async function get_class_info(course: WebElement) {
+
+}
+
 // TODO: Swap to headless chrome
-export async function get_classes(semester: string, major: string) {
+export async function get_classes(driver: ThenableWebDriver, semester: string, major: string) {
     let classes_obj: Class[] = []
 
     try {

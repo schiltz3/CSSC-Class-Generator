@@ -1,4 +1,4 @@
-import { get_classes } from './selenium';
+import { get_classes, setup } from './selenium';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { resolve } from 'path';
@@ -19,6 +19,9 @@ function saveData(filename: string, data: any) {
 const semester = "Fall"
 const major = "COMPSCI"
 // get_classes(year, major)
-get_classes(semester, major).then((classes) => {
+const driver_path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_104/chromedriver.exe'
+const driver = setup(driver_path)
+
+get_classes(driver, semester, major).then((classes) => {
     saveData(major + "-" + semester + "-Class-List", classes)
 })
