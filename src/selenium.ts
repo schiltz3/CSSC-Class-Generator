@@ -1,10 +1,11 @@
-import { Builder, By, Capabilities, ThenableWebDriver, until } from 'selenium-webdriver';
+import { Builder, By, Capabilities, ThenableWebDriver, until, WebElement, WebElementCondition } from 'selenium-webdriver';
 import chrome, { Options } from 'selenium-webdriver/chrome';
 
 
 export interface Class {
-    number: string,
+    code: string,
     title: string,
+    info: string
 }
 
 export function setup(driver_path: string) {
@@ -34,9 +35,10 @@ export async function get_majors() {
 
 }
 
-// async function get_class_info(course: WebElement) {
-
-// }
+async function get_class_info(course_element: WebElement): Promise<string> {
+    const description_element = await course_element.findElement(By.className("section__content"));
+    return await description_element.getText()
+}
 
 // TODO: Swap to headless chrome
 export async function get_classes(driver: ThenableWebDriver, semester: string, subject: string) {
@@ -65,20 +67,56 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
         const course_elements = await driver.wait(until.elementsLocated(By.className("result result--group-start")))
 
         //waits
-        course_elements.forEach(async (course_element) => {
+        for (let course_element_i in course_elements) {
+            let course_element = course_elements[course_element_i]
+
             const [number, title] = await Promise.all([
                 course_element.findElement(By.className("result__code")).getText(),
                 course_element.findElement(By.className("result__title")).getText()
             ])
+
+            await course_element.click();
+
+            //wait for panel to load
+            const content_element = await driver.wait(until.elementLocated(By.className("panel panel--2x panel--kind-details panel--visible")));
+
+            const info = await get_class_info(content_element)
+            console.log(info)
+
             var course: Class = {
-                number: number,
-                title: title
+                code: number,
+                title: title,
+                info: info
             }
             courses_list.push(course)
-        });
+        }
+
+        //does not wait
+        //ran in paralell which can't happen with clicks
+        // course_elements.forEach(
+        //     async (course_element) => {
+        //         const [number, title] = await Promise.all([
+        //             course_element.findElement(By.className("result__code")).getText(),
+        //             course_element.findElement(By.className("result__title")).getText()
+        //         ])
+
+        //         await course_element.click();
+        //         // wait for panel to load
+        //         const content_element = await driver.wait(until.elementLocated(By.className("panel panel--2x panel--kind-details panel--visible")));
+
+        //         const info = await get_class_info(content_element)
+        //         console.log(info)
+
+        //         var course: Class = {
+        //             code: number,
+        //             title: title,
+        //             info: info
+        //         }
+        //         courses_list.push(course)
+        //     });
 
     } finally {
-        await driver.sleep(1000)
+        // await driver.sleep(1000)
         await driver.quit();
         return courses_list
     }
