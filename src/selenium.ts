@@ -1,5 +1,5 @@
 import { Builder, By, Capabilities, until } from 'selenium-webdriver';
-import chrome from 'selenium-webdriver/chrome';
+import chrome, { Options } from 'selenium-webdriver/chrome';
 
 // const path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_105/chromedriver.exe'
 // chromedriver for chrome version 104
@@ -9,8 +9,12 @@ const service = new chrome.ServiceBuilder(path);
 let capabilities = new Capabilities();
 capabilities.setPageLoadStrategy("eager");
 
+let options = new Options();
+options.headless();
+
 const driver = new Builder()
     .withCapabilities(capabilities)
+    .setChromeOptions(options)
     .forBrowser('chrome')
     .setChromeService(service)
     .build();
