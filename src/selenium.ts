@@ -64,7 +64,6 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, m
         // Allow results to load
         await driver.wait(until.elementsLocated(By.className("result result--group-start")))
 
-        const classes = await driver.findElements(By.className("result result--group-start"));
         const courses = await driver.findElements(By.className("result result--group-start"));
         courses.forEach(async (item) => {
             const [number, title] = await Promise.all([
