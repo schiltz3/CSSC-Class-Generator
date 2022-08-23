@@ -48,7 +48,7 @@ export async function get_classes(semester: string, major: string) {
 
         const classes = await driver.findElements(By.className("result result--group-start"));
         classes.forEach(async (item) => {
-            const number = (await item.findElement(By.className("result__code")).getText()).split(" ")[1]
+            const number = await item.findElement(By.className("result__code")).getText()
             const title = await item.findElement(By.className("result__title")).getText()
             var _class: Class = {
                 number: number,
