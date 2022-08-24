@@ -30,10 +30,23 @@ export function setup(driver_path: string) {
     return driver
 }
 
-export async function get_semester() {
+export async function get_semesters(driver: ThenableWebDriver) {
+    let semesters: string[] = []
+    try {
+        await driver.get('https://catalog.uwm.edu/course-search');
+        const semester_element = await driver.findElement(By.css("#crit-srcdb"));
+        const semester_elements = await semester_element.findElements(By.xpath(".//option"));
 
+        for (let semester of semester_elements) {
+            const code = await semester.getText()
+            driver.sleep(1)
+            semesters.push(code)
+        }
+    } finally {
+        await driver.quit();
+        return semesters
+    }
 }
-export async function get_majors() {
 
 export async function get_major_codes(driver: ThenableWebDriver) {
     let subjects: string[] = []

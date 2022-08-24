@@ -1,4 +1,4 @@
-import { get_classes, setup } from './selenium';
+import { get_classes, get_major_codes, get_semesters, setup } from './selenium';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import { resolve } from 'path';
@@ -19,8 +19,24 @@ const semester = "Fall"
 const major_code = "COMPSCI"
 const driver_path = 'E:/git/CSSC-Class-Generator/chromedriver_win32_104/chromedriver.exe'
 
-const driver = setup(driver_path)
+let driver = setup(driver_path)
 
-get_classes(driver, semester, major_code).then((classes) => {
-    saveData(major_code + "-" + semester + "-Class-List", classes)
-})
+get_semesters(driver).then(
+    (semesters) => {
+        saveData("Semesters", semesters)
+    }
+)
+
+driver = setup(driver_path)
+get_major_codes(driver).then(
+    (codes) => {
+        saveData("Major Codes", codes)
+    }
+)
+
+driver = setup(driver_path)
+get_classes(driver, semester, major_code).then(
+    (classes) => {
+        saveData(major_code + "-" + semester + "-Class-List", classes)
+    }
+)
