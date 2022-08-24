@@ -35,6 +35,21 @@ export async function get_semester() {
 }
 export async function get_majors() {
 
+export async function get_major_codes(driver: ThenableWebDriver) {
+    let subjects: string[] = []
+    try {
+        await driver.get('https://catalog.uwm.edu/course-search');
+        const subject_element = await driver.findElement(By.css("#crit-subject"));
+        const subject_elements = await subject_element.findElements(By.xpath(".//option"));
+        for (let subject of subject_elements) {
+            const code = await subject.getAttribute("value")
+            driver.sleep(1)
+            subjects.push(code)
+        }
+    } finally {
+        await driver.quit();
+        return subjects
+    }
 }
 
 async function get_class_info(course_element: WebElement): Promise<string> {
