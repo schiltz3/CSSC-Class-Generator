@@ -17,7 +17,9 @@ export function setup(driver_path: string) {
     capabilities.setPageLoadStrategy("eager");
 
     let options = new Options();
-    // options.headless();
+    options.headless();
+    // Must set size in headless mode to stop failing after first iteration when trying to click element
+    options.addArguments("--window-size=1400x1000")
 
     const driver = new Builder()
         .withCapabilities(capabilities)
