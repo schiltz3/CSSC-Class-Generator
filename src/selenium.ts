@@ -1,4 +1,4 @@
-import { Builder, By, Capabilities, ThenableWebDriver, until, WebElement, WebElementCondition } from 'selenium-webdriver';
+import { Builder, By, Capabilities, ThenableWebDriver, until, WebElement } from 'selenium-webdriver';
 import chrome, { Options } from 'selenium-webdriver/chrome';
 
 
@@ -67,22 +67,25 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
         const course_elements = await driver.wait(until.elementsLocated(By.className("result result--group-start")))
 
         //waits
-        for (let course_element_i in course_elements) {
         for (let course_element of course_elements) {
 
-
-            const [number, title] = await Promise.all([
+            const [number, title, result_link] = await Promise.all([
                 course_element.findElement(By.className("result__code")).getText(),
-                course_element.findElement(By.className("result__title")).getText()
+                course_element.findElement(By.className("result__title")).getText(),
+                course_element.findElement(By.xpath(".//a"))
             ])
 
             await course_element.click();
 
-            //wait for panel to load
-            await driver.sleep(200) //Do not know how to verify new panel has loaded
             const content_element = await driver.wait(until.elementLocated(By.className("panel panel--2x panel--kind-details panel--visible")));
-            await driver.wait(until.elementIsVisible(content_element));
 
+            // Wait until ajax has loaded the class info
+            // ajax does not reload the entire page, so this must be done manually
+            let link = ""
+            do {
+                link = await result_link.getAttribute("class");
+                await driver.sleep(25)
+            } while (link != "result__link result__link--viewing")
 
             const info = await get_class_info(content_element)
 
@@ -91,6 +94,7 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
                 title: title,
                 info: info
             }
+            console.log(course)
             courses_list.push(course)
         }
 
