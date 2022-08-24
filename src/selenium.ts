@@ -68,7 +68,8 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
 
         //waits
         for (let course_element_i in course_elements) {
-            let course_element = course_elements[course_element_i]
+        for (let course_element of course_elements) {
+
 
             const [number, title] = await Promise.all([
                 course_element.findElement(By.className("result__code")).getText(),
