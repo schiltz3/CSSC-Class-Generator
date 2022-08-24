@@ -42,7 +42,6 @@ async function get_class_info(course_element: WebElement): Promise<string> {
     return await description_element.getText()
 }
 
-// TODO: Swap to headless chrome
 export async function get_classes(driver: ThenableWebDriver, semester: string, subject: string) {
     let courses_list: Class[] = []
 
@@ -54,7 +53,6 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
             driver.findElement(By.css("option[value='" + subject + "']")),
             driver.findElement(By.id("search-button"))
         ])
-
         semester_elements.forEach(async (semester_element) => {
             let text = await semester_element.getText()
             if (text.startsWith(semester)) {
@@ -67,8 +65,9 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
 
         // Allow results to load
         const course_elements = await driver.wait(until.elementsLocated(By.className("result result--group-start")))
+        console.info("Discovered: " + course_elements.length + " courses")
 
-        //waits
+        let course_count = 0
         for (let course_element of course_elements) {
 
             const [number, title, result_link] = await Promise.all([
@@ -96,12 +95,11 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
                 title: title,
                 info: info
             }
-            console.log(course)
             courses_list.push(course)
+            console.info(++course_count)
         }
 
     } finally {
-        // await driver.sleep(1000)
         await driver.quit();
         return courses_list
     }
