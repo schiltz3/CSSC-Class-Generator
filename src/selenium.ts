@@ -1,11 +1,12 @@
 import { Builder, By, Capabilities, ThenableWebDriver, until, WebElement } from 'selenium-webdriver';
 import chrome, { Options } from 'selenium-webdriver/chrome';
-
+import { generate, SUUID } from 'short-uuid';
 
 export interface Class {
     code: string,
     title: string,
-    info: string
+    info: string,
+    suuid: SUUID
 }
 
 export function setup(driver_path: string) {
@@ -121,7 +122,9 @@ export async function get_classes(driver: ThenableWebDriver, semester: string, s
             var course: Class = {
                 code: number,
                 title: title,
-                info: info
+                info: info,
+                // TODO: seed generate?
+                suuid: generate()
             }
             courses_list.push(course)
             console.info(++course_count)
