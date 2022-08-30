@@ -88,6 +88,7 @@ export async function get_classes(
   subject: string
 ) {
   let courses_list: Class[] = [];
+  let course_duplicate_map: Map<string, number> = new Map();
 
   try {
     await driver.get("https://catalog.uwm.edu/course-search");
@@ -98,6 +99,7 @@ export async function get_classes(
         driver.findElement(By.css("option[value='" + subject + "']")),
         driver.findElement(By.id("search-button")),
       ]);
+
     semester_elements.forEach(async (semester_element) => {
       let text = await semester_element.getText();
       if (text.startsWith(semester)) {
@@ -140,8 +142,18 @@ export async function get_classes(
 
       const info = await get_class_info(content_element);
 
+      // Check if class is duplicate and append number to end
+      const repeat_count = course_duplicate_map.get(number);
+      let course_code = number;
+      if (repeat_count) {
+        course_code = course_code + ` (${repeat_count})`;
+        course_duplicate_map.set(number, repeat_count + 1);
+      } else {
+        course_duplicate_map.set(number, 1);
+      }
+
       var course: Class = {
-        code: number,
+        code: course_code,
         title: title,
         info: info,
       };
@@ -151,5 +163,6 @@ export async function get_classes(
   } finally {
     await driver.quit();
     return courses_list;
+    // return courses_map;
   }
 }
